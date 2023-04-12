@@ -104,14 +104,19 @@ def PdfConverter():
         # Translate text if needed
         if language:
             translator = Translator()
-            translation = translator.translate(text, dest=language)
-            text = translation.text
+            translation_text = ''
+            for i in range(0, len(text), 5000):
+                text_chunk = text[i:i+5000]
+                translation = translator.translate(text_chunk, dest=language)
+                translation_text += translation.text
+            text = translation_text
         # Recognize text and get language code
         elif language == None:
             translator = Translator()
-            detected = translator.detect(text)
+            text_chunk = text[:5000]
+            detected = translator.detect(text_chunk)
             lang_code = detected.lang
-            language = lang_code 
+            language = lang_code
             
         # Synthesizing speech and saving the audio file
         print("The file is being written. Waitin...")
